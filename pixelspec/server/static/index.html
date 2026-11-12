@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelSpec | Automated E-Commerce Image Quality & Compliance Inspector</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-logo">PS</div>
+        <div class="brand-text">
+          <span class="brand-title">Pixel<strong>Spec</strong></span>
+          <span class="brand-tag">DIP Inspection System &middot; HSR-AIML-056</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <span class="badge-status online"><span class="dot"></span> Engine Ready</span>
+        <a href="https://github.com/ChaarSaal/DIP_Project" target="_blank" class="nav-link">GitHub Repository &nearr;</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-layout">
+    
+    <!-- Left Sidebar: Controls & Upload -->
+    <aside class="sidebar">
+      
+      <!-- Upload Card -->
+      <div class="card upload-card">
+        <h2 class="card-title">Product Photograph</h2>
+        <p class="card-desc">Upload a product photo (JPEG, PNG) to analyze its visual compliance.</p>
+        
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <p class="drop-text">Drag & drop product photo here or <span>browse</span></p>
+          <span class="drop-hint">Supports JPEG, PNG up to 25MB</span>
+          <input type="file" id="file-input" accept="image/jpeg,image/png" style="display: none;">
+        </div>
+
+        <div id="file-info" class="file-info" style="display: none;">
+          <div class="file-details">
+            <span id="file-name" class="file-name">product.jpg</span>
+            <span id="file-meta" class="file-meta">1.4 MB</span>
+          </div>
+          <button id="btn-remove-file" class="btn-icon">&times;</button>
+        </div>
+      </div>
+
+      <!-- Settings & Policy Card -->
+      <div class="card config-card">
+        <h2 class="card-title">Inspection Configuration</h2>
+        
+        <div class="form-group">
+          <label for="profile-select">Compliance Preset</label>
+          <select id="profile-select" class="form-control">
+            <option value="standard" selected>Standard E-Commerce (Mainstream)</option>
+            <option value="studio_pro">Studio Pro / Pure White (Strict)</option>
+            <option value="relaxed">Relaxed Marketplace (Secondary)</option>
+          </select>
+          <span id="profile-desc" class="field-hint">Standard general catalog inspection suitable for mainstream e-commerce listings.</span>
+        </div>
+
+        <div class="form-group">
+          <label>DIP Pipeline Mode</label>
+          <div class="segmented-control">
+            <button type="button" class="seg-btn active" data-mode="advanced">Advanced (Multi-Cue)</button>
+            <button type="button" class="seg-btn" data-mode="baseline">Baseline (Otsu)</button>
+            <button type="button" class="seg-btn" data-mode="comparison">Side-by-Side</button>
+          </div>
+        </div>
+
+        <button id="btn-inspect" class="btn btn-primary" disabled>
+          <span class="btn-spinner" style="display: none;"></span>
+          <span class="btn-label">Run Inspection</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Right Content: Results & Evidence -->
+    <section class="content-area">
+
+      <!-- Placeholder before upload -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">&#128269;</div>
+        <h3>No Photograph Inspected Yet</h3>
+        <p>Select or drag a product photo on the left panel to begin automated DIP compliance audit.</p>
+      </div>
+
+      <!-- Results Container -->
+      <div id="results-panel" class="results-panel" style="display: none;">
+        
+        <!-- Score & Verdict Header -->
+        <div class="verdict-bar">
+          <div class="verdict-summary">
+            <span id="verdict-badge" class="verdict-badge pass">PASS</span>
+            <div class="score-container">
+              <span class="score-num" id="overall-score">92.4</span>
+              <span class="score-den">/ 100</span>
+            </div>
+            <div class="meta-container">
+              <span id="res-pipeline-name" class="pipeline-tag">Proposed Advanced Multi-Cue Pipeline</span>
+              <span class="latency-tag"><span id="res-latency">42</span> ms processing</span>
+            </div>
+          </div>
+          <div class="verdict-actions">
+            <button id="btn-export-html" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Export Audit Sheet
+            </button>
+          </div>
+        </div>
+
+        <!-- Comparative Summary Banner (Only in Comparison Mode) -->
+        <div id="comparison-banner" class="card comparison-card" style="display: none;">
+          <h3 class="card-title">Baseline vs Proposed Pipeline Comparative Audit</h3>
+          <div class="comparison-grid">
+            <div class="comp-col">
+              <h4>Classical Baseline (Otsu)</h4>
+              <div class="comp-stat"><span>Score:</span> <strong id="comp-base-score">--</strong></div>
+              <div class="comp-stat"><span>Verdict:</span> <span id="comp-base-verdict" class="pill">--</span></div>
+              <div class="comp-stat"><span>Latency:</span> <span id="comp-base-time">-- ms</span></div>
+              <div class="comp-stat"><span>Defects Found:</span> <span id="comp-base-defects">--</span></div>
+            </div>
+            <div class="comp-divider">VS</div>
+            <div class="comp-col highlight">
+              <h4>Proposed Advanced Pipeline</h4>
+              <div class="comp-stat"><span>Score:</span> <strong id="comp-adv-score">--</strong></div>
+              <div class="comp-stat"><span>Verdict:</span> <span id="comp-adv-verdict" class="pill">--</span></div>
+              <div class="comp-stat"><span>Latency:</span> <span id="comp-adv-time">-- ms</span></div>
+              <div class="comp-stat"><span>Defects Found:</span> <span id="comp-adv-defects">--</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intermediate Stages Carousel -->
+        <div class="card stage-card">
+          <div class="stage-nav">
+            <h3 class="stage-title">DIP Visual Evidence &amp; Intermediate Representations</h3>
+            <div id="stage-tabs" class="stage-tabs">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+          <div class="stage-viewer">
+            <img id="active-stage-img" src="" alt="Active Stage View">
+            <div id="stage-caption" class="stage-caption">Final annotated inspection overlay.</div>
+          </div>
+        </div>
+
+        <!-- Actionable Recommendations Card -->
+        <div class="card recs-card">
+          <h3 class="card-title">&#9881; Actionable Photographer / Seller Guidance</h3>
+          <ul id="recs-list" class="recs-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- 5 DIP Metrics Cards Grid -->
+        <div class="metrics-grid">
+          
+          <!-- Metric 1: Sharpness -->
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-name">Focus &amp; Sharpness</span>
+              <span id="m-sharp-score" class="metric-badge">88%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-sharp" class="progress-fill" style="width: 88%;"></div></div>
+            <div class="metric-details">
+              <div class="stat-line"><span>Tenengrad Gradient:</span><strong id="m-tenengrad">--</strong></div>
+              <div class="stat-line"><span>Laplacian Variance:</span><strong id="m-lap-var">--</strong></div>
+              <div class="stat-line"><span>FFT Spectral Ratio:</span><strong id="m-fft-ratio">--</strong></div>
+            </div>
+          </div>
+
+          <!-- Metric 2: Exposure -->
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-name">Exposure &amp; Tone</span>
+              <span id="m-exp-score" class="metric-badge">94%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-exp" class="progress-fill" style="width: 94%;"></div></div>
+            <div class="metric-details">
+              <div class="stat-line"><span>Blown Highlights:</span><strong id="m-highlight-clip">--</strong></div>
+              <div class="stat-line"><span>Crushed Shadows:</span><strong id="m-shadow-clip">--</strong></div>
+              <div class="stat-line"><span>Shannon Entropy:</span><strong id="m-entropy">--</strong></div>
+            </div>
+          </div>
+
+          <!-- Metric 3: Background -->
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-name">Background Purity</span>
+              <span id="m-bg-score" class="metric-badge">96%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-bg" class="progress-fill" style="width: 96%;"></div></div>
+            <div class="metric-details">
+              <div class="stat-line"><span>Median &Delta;E (from white):</span><strong id="m-delta-e">--</strong></div>
+              <div class="stat-line"><span>Color Dispersion:</span><strong id="m-dispersion">--</strong></div>
+              <div class="stat-line"><span>Studio Pure White:</span><strong id="m-pure-white">--</strong></div>
+            </div>
+          </div>
+
+          <!-- Metric 4: Framing & Geometry -->
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-name">Framing &amp; Margins</span>
+              <span id="m-frame-score" class="metric-badge">85%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-frame" class="progress-fill" style="width: 85%;"></div></div>
+            <div class="metric-details">
+              <div class="stat-line"><span>Frame Occupancy:</span><strong id="m-occupancy">--</strong></div>
+              <div class="stat-line"><span>Center Deviation:</span><strong id="m-center-offset">--</strong></div>
+              <div class="stat-line"><span>Edge Clipping:</span><strong id="m-edge-clipped">--</strong></div>
+            </div>
+          </div>
+
+          <!-- Metric 5: Noise -->
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-name">Sensor Grain &amp; Noise</span>
+              <span id="m-noise-score" class="metric-badge">92%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-noise" class="progress-fill" style="width: 92%;"></div></div>
+            <div class="metric-details">
+              <div class="stat-line"><span>MAD Residual (&sigma;):</span><strong id="m-mad-sigma">--</strong></div>
+              <div class="stat-line"><span>Signal-to-Noise Ratio:</span><strong id="m-snr">-- dB</strong></div>
+              <div class="stat-line"><span>Noise Clarity:</span><strong id="m-noise-verdict">--</strong></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Script -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

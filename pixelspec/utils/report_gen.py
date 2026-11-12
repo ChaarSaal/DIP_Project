@@ -1,0 +1,95 @@
+"""
+PixelSpec Report Generator
+Generates exportable JSON inspection certificates and printable HTML compliance audit sheets.
+"""
+
+import json
+from typing import Dict, Any
+
+
+def generate_html_audit_report(result: Dict[str, Any], filename: str = "product_image.jpg") -> str:
+    """
+    Generates a professional, self-contained HTML audit document ready for printing or saving as PDF.
+    """
+    verdict = result.get("verdict", "UNKNOWN")
+    score = result.get("overall_score", 0.0)
+    metrics = result.get("metrics", {})
+    defects = result.get("defects", [])
+    recommendations = result.get("recommendations", [])
+    stages = result.get("stage_images", {})
+    annotated_b64 = stages.get("annotated", "")
+
+    verdict_class = "pass" if verdict == "PASS" else ("warning" if verdict == "NEEDS_IMPROVEMENT" else "fail")
+
+    defects_html = "".join(f"<li>{d}</li>" for d in defects) if defects else "<li>No critical defects detected.</li>"
+    recs_html = "".join(f"<li>{r}</li>" for r in recommendations) if recommendations else "<li>No changes required. Ready for catalog.</li>"
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PixelSpec Quality Audit - {filename}</title>
+<style>
+  body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 30px; color: #1e293b; background: #f8fafc; }}
+  .container {{ max-width: 860px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }}
+  .header {{ display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }}
+  .brand {{ font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }}
+  .brand span {{ color: #2563eb; }}
+  .verdict-badge {{ font-size: 18px; font-weight: 700; padding: 8px 18px; border-radius: 20px; text-transform: uppercase; }}
+  .pass {{ background: #dcfce7; color: #15803d; }}
+  .warning {{ background: #fef3c7; color: #b45309; }}
+  .fail {{ background: #fee2e2; color: #b91c1c; }}
+  .grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 30px; }}
+  .card {{ background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; }}
+  h3 {{ margin-top: 0; font-size: 15px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }}
+  .stat-row {{ display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }}
+  .stat-val {{ font-weight: 600; color: #0f172a; }}
+  .img-preview {{ width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; border: 1px solid #cbd5e1; margin-top: 20px; }}
+  ul {{ margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }}
+  .footer {{ margin-top: 40px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px; }}
+  @media print {{ body {{ background: #fff; padding: 0; }} .container {{ border: none; box-shadow: none; padding: 0; }} }}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="brand">Pixel<span>Spec</span> Inspector</div>
+      <div style="font-size: 13px; color: #64748b; margin-top: 4px;">Automated E-Commerce Compliance Report &middot; {filename}</div>
+    </div>
+    <div>
+      <span class="verdict-badge {verdict_class}">{verdict} &middot; {score}/100</span>
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    {"<img class='img-preview' src='" + annotated_b64 + "' alt='Audit Overlay' />" if annotated_b64 else ""}
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>DIP Metric Breakdown</h3>
+      <div class="stat-row"><span>Sharpness (Tenengrad/FFT):</span><span class="stat-val">{metrics.get('sharpness', {}).get('sharpness_score', 'N/A')}/100</span></div>
+      <div class="stat-row"><span>Exposure & Dynamic Range:</span><span class="stat-val">{metrics.get('exposure', {}).get('exposure_score', 'N/A')}/100</span></div>
+      <div class="stat-row"><span>Sensor Noise (MAD Sigma):</span><span class="stat-val">{metrics.get('noise', {}).get('estimated_noise_sigma', 'N/A')}</span></div>
+      <div class="stat-row"><span>Background Purity:</span><span class="stat-val">{metrics.get('background', {}).get('purity_score', 'N/A')}/100</span></div>
+      <div class="stat-row"><span>Framing & Occupancy:</span><span class="stat-val">{metrics.get('framing', {}).get('framing_score', 'N/A')}/100</span></div>
+      <div class="stat-row"><span>Execution Latency:</span><span class="stat-val">{result.get('elapsed_ms', 0)} ms</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Detected Issues</h3>
+      <ul>{defects_html}</ul>
+      <h3 style="margin-top: 18px;">Recommended Fixes</h3>
+      <ul>{recs_html}</ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated by PixelSpec &middot; Digital Image Processing Academic Laboratory 2026 &middot; Complies with HSR-AIML-056 Specifications
+  </div>
+</div>
+</body>
+</html>
+"""
+    return html_content

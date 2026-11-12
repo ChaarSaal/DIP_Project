@@ -1,0 +1,199 @@
+[
+  {
+    "filename": "sample_fail_bad_bg.jpg",
+    "baseline": {
+      "score": 83.1,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 691.36,
+      "defects": [
+        "Background is not uniform / off-white."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 65.4,
+        "framing": 100.0
+      }
+    },
+    "advanced": {
+      "score": 83.1,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 1183.79,
+      "defects": [
+        "Non-compliant background (Delta E: 20.2, Purity: 65.5/100)."
+      ],
+      "recommendations": [
+        "Background: Re-shoot against a seamless pure white sweep (RGB 255) or boost background backlight exposure.",
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 65.5,
+        "framing": 100.0
+      }
+    }
+  },
+  {
+    "filename": "sample_fail_blurry.jpg",
+    "baseline": {
+      "score": 71.8,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 465.79,
+      "defects": [
+        "Blur / Insufficient product sharpness.",
+        "Low tonal contrast / compressed dynamic range."
+      ],
+      "metrics": {
+        "sharpness": 45.0,
+        "background": 98.7,
+        "framing": 100.0
+      }
+    },
+    "advanced": {
+      "score": 77.9,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 1031.9,
+      "defects": [
+        "Blur / Low product sharpness (Score: 45.0/100)."
+      ],
+      "recommendations": [
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame.",
+        "Focus: Image appears soft or blurred. Use a tripod, narrow aperture (f/8-f/11), and verify focus on the main product logo/texture."
+      ],
+      "metrics": {
+        "sharpness": 45.0,
+        "background": 99.7,
+        "framing": 100.0
+      }
+    }
+  },
+  {
+    "filename": "sample_fail_clipped.jpg",
+    "baseline": {
+      "score": 88.0,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 419.68,
+      "defects": [
+        "Off-center framing detected (offset 25.1%)."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.7,
+        "framing": 89.6
+      }
+    },
+    "advanced": {
+      "score": 87.7,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 1057.65,
+      "defects": [
+        "Off-center framing detected (offset 25.2%)."
+      ],
+      "recommendations": [
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.8,
+        "framing": 89.5
+      }
+    }
+  },
+  {
+    "filename": "sample_fail_noisy.jpg",
+    "baseline": {
+      "score": 76.7,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 1285.31,
+      "defects": [
+        "Excessive grain / noise (sigma=13.84)."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 91.4,
+        "framing": 100.0
+      }
+    },
+    "advanced": {
+      "score": 76.8,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 2276.02,
+      "defects": [
+        "High grain / sensor noise (sigma=13.84)."
+      ],
+      "recommendations": [
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame.",
+        "Sensor Grain: Noticeable grain detected (sigma=13.84). Lower camera ISO to 100 or 200."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 91.4,
+        "framing": 100.0
+      }
+    }
+  },
+  {
+    "filename": "sample_fail_overexposed.jpg",
+    "baseline": {
+      "score": 80.2,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 485.53,
+      "defects": [
+        "Highlight clipping detected (10.1% overexposed).",
+        "Low tonal contrast / compressed dynamic range.",
+        "Product is undersized in frame (39.6% span, target > 60%)."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.2,
+        "framing": 90.6
+      }
+    },
+    "advanced": {
+      "score": 80.1,
+      "verdict": "NEEDS_IMPROVEMENT",
+      "elapsed_ms": 1020.3,
+      "defects": [
+        "Highlight clipping detected (10.4% overexposed).",
+        "Low tonal contrast / compressed dynamic range.",
+        "Product is undersized in frame (39.6% span, target > 60%)."
+      ],
+      "recommendations": [
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame.",
+        "Lighting: Highlights are blown out with lost surface detail. Reduce key light power or use a diffuser."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.2,
+        "framing": 90.6
+      }
+    }
+  },
+  {
+    "filename": "sample_pass_studio.jpg",
+    "baseline": {
+      "score": 90.0,
+      "verdict": "PASS",
+      "elapsed_ms": 439.03,
+      "defects": [],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.7,
+        "framing": 100.0
+      }
+    },
+    "advanced": {
+      "score": 89.8,
+      "verdict": "PASS",
+      "elapsed_ms": 1064.21,
+      "defects": [],
+      "recommendations": [
+        "Framing: Crop tighter around the product. It currently occupies less than 60% of the vertical/horizontal frame."
+      ],
+      "metrics": {
+        "sharpness": 100.0,
+        "background": 99.8,
+        "framing": 100.0
+      }
+    }
+  }
+]
