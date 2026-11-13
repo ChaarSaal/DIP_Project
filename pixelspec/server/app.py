@@ -5,7 +5,8 @@ Provides RESTful APIs for real-time DIP inspection and interactive browser UI.
 """
 
 import argparse
-import cgi
+from email.parser import BytesParser
+from email.policy import default
 import io
 import json
 import os
@@ -117,29 +118,34 @@ class PixelSpecRequestHandler(BaseHTTPRequestHandler):
 
             profile = PROFILES.get(profile_key, PROFILES["standard"])
 
+            # Read request body
+            raw_body = self.rfile.read(content_length)
+
             # Handle multipart/form-data or raw octet-stream
             image_bytes = None
             filename = "upload.jpg"
 
             if "multipart/form-data" in content_type:
-                environ = {
-                    "REQUEST_METHOD": "POST",
-                    "CONTENT_TYPE": content_type,
-                    "CONTENT_LENGTH": str(content_length),
-                }
-                form = cgi.FieldStorage(
-                    fp=self.rfile,
-                    headers=self.headers,
-                    environ=environ
-                )
-                if "file" in form and form["file"].file:
-                    image_bytes = form["file"].file.read()
-                    filename = getattr(form["file"], "filename", "upload.jpg") or "upload.jpg"
-                else:
-                    self._send_json({"error": "No 'file' field provided in form upload."}, 400)
+                try:
+                    envelope = (
+                        f"Content-Type: {content_type}\r\nMIME-Version: 1.0\r\n\r\n".encode("latin1")
+                        + raw_body
+                    )
+                    msg = BytesParser(policy=default).parsebytes(envelope)
+                    for part in msg.iter_parts():
+                        cd = part.get("Content-Disposition", "")
+                        if 'name="file"' in cd or part.get_filename():
+                            image_bytes = part.get_payload(decode=True)
+                            filename = part.get_filename() or "upload.jpg"
+                            break
+                    if not image_bytes:
+                        self._send_json({"error": "No 'file' field found in multipart upload."}, 400)
+                        return
+                except Exception as e:
+                    self._send_json({"error": f"Failed to parse multipart upload: {str(e)}"}, 400)
                     return
             else:
-                image_bytes = self.rfile.read(content_length)
+                image_bytes = raw_body
 
             if not image_bytes:
                 self._send_json({"error": "Empty image payload."}, 400)
